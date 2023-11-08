@@ -169,7 +169,7 @@ public class DocumentStoreIndexerIT extends LuceneAbstractIndexCommandTest {
     }
 
     @Test
-    @Ignore("OAK-10495")
+//    @Ignore("OAK-10495")
     public void parallelReindex() throws Exception {
         LOG.info("Starting parallelReindex");
         System.setProperty(IndexStoreUtils.OAK_INDEXER_USE_LZ4, "false");
@@ -178,7 +178,7 @@ public class DocumentStoreIndexerIT extends LuceneAbstractIndexCommandTest {
     }
 
     @Test
-    @Ignore("OAK-10495")
+//    @Ignore("OAK-10495")
     public void parallelReindexWithLZ4() throws Exception {
         LOG.info("Starting parallelReindexWithLZ4");
         System.setProperty(OAK_INDEXER_USE_LZ4, "true");
@@ -381,7 +381,7 @@ public class DocumentStoreIndexerIT extends LuceneAbstractIndexCommandTest {
     }
 
     @Test
-    @Ignore("OAK-10495")
+//    @Ignore("OAK-10495")
     public void testParallelIndexing() throws Exception {
         System.setProperty(IndexerConfiguration.PROP_OAK_INDEXER_PARALLEL_INDEX, "true");
         System.setProperty(IndexerConfiguration.PROP_OAK_INDEXER_THREAD_POOL_SIZE, "2");
