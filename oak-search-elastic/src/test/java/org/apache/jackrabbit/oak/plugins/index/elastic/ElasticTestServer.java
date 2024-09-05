@@ -18,6 +18,8 @@ package org.apache.jackrabbit.oak.plugins.index.elastic;
 
 import co.elastic.clients.transport.Version;
 import com.github.dockerjava.api.DockerClient;
+import com.github.dockerjava.api.model.Container;
+import com.github.dockerjava.api.model.Image;
 import org.apache.jackrabbit.oak.commons.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -35,6 +37,7 @@ import java.net.URL;
 import java.security.DigestInputStream;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.util.List;
 import java.util.Map;
 
 import static org.junit.Assume.assumeNotNull;
@@ -173,15 +176,17 @@ public class ElasticTestServer implements AutoCloseable {
         }
     }
 
-    private void checkIfDockerClientAvailable() {
+    public static DockerClient checkIfDockerClientAvailable() {
         DockerClient client = null;
         try {
             client = DockerClientFactory.instance().client();
+
         } catch (Exception e) {
             LOG.warn("Docker is not available and elasticConnectionDetails sys prop not specified or incorrect" +
                     ", Elastic tests will be skipped");
         }
         assumeNotNull(client);
+        return client;
     }
 
     /**

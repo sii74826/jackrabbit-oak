@@ -16,6 +16,8 @@
  */
 package org.apache.jackrabbit.oak.plugins.index.elastic;
 
+import com.github.dockerjava.api.DockerClient;
+import com.github.dockerjava.api.model.Container;
 import eu.rekawek.toxiproxy.Proxy;
 import eu.rekawek.toxiproxy.ToxiproxyClient;
 import eu.rekawek.toxiproxy.model.ToxicDirection;
@@ -29,8 +31,10 @@ import org.testcontainers.utility.DockerImageName;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.List;
 import java.util.UUID;
 
+import static org.apache.jackrabbit.oak.plugins.index.elastic.ElasticTestServer.checkIfDockerClientAvailable;
 import static org.hamcrest.CoreMatchers.containsString;
 import static org.hamcrest.CoreMatchers.not;
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -45,16 +49,28 @@ public class ElasticReliabilityTest extends ElasticAbstractQueryTest {
 
     @Override
     public void before() throws Exception {
+        listContainers("before ToxiProxy start");
         toxiproxy = new ToxiproxyContainer(TOXIPROXY_IMAGE).withNetwork(elasticRule.elastic.getNetwork());
         toxiproxy.start();
         ToxiproxyClient toxiproxyClient = new ToxiproxyClient(toxiproxy.getHost(), toxiproxy.getControlPort());
         proxy = toxiproxyClient.createProxy("elastic", "0.0.0.0:8666", "elasticsearch:9200");
+        listContainers("after ToxiProxy start");
         super.before();
+    }
+
+    private static void listContainers(String description) {
+        DockerClient dockerClient = checkIfDockerClientAvailable();
+        List<Container> containers = dockerClient.listContainersCmd().exec();
+        LOG.info("List of containers - " + description);
+        for (Container container : containers) {
+            LOG.info("name:" + container.getImage() + " status:" + container.getStatus() + " state:" + container.getState());
+        }
     }
 
     @After
     @Override
     public void tearDown() throws IOException {
+        listContainers("before tearDown");
         super.tearDown();
         if (toxiproxy.isRunning()) {
             toxiproxy.stop();
