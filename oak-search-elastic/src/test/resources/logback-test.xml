@@ -41,9 +41,9 @@
         <appender-ref ref="file"/>
     </root>
 
-    <logger name="org.apache.jackrabbit.oak.plugins.index.elastic.ElasticReliabilityTest" level="DEBUG"/>
-    <logger name="eu.rekawek.toxiproxy" level="DEBUG"/>
-    <logger name="org.testcontainers" level="DEBUG"/>
-    <logger name="co.elastic" level="DEBUG"/>
+<!--    <logger name="org.apache.jackrabbit.oak.plugins.index.elastic.ElasticReliabilityTest" level="DEBUG"/>-->
+<!--    <logger name="eu.rekawek.toxiproxy" level="DEBUG"/>-->
+<!--    <logger name="org.testcontainers" level="DEBUG"/>-->
+<!--    <logger name="co.elastic" level="DEBUG"/>-->
 
 </configuration>
