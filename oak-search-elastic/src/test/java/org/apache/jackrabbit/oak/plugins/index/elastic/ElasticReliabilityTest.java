@@ -18,6 +18,7 @@ package org.apache.jackrabbit.oak.plugins.index.elastic;
 
 import com.github.dockerjava.api.DockerClient;
 import com.github.dockerjava.api.model.Container;
+import com.github.dockerjava.api.model.Network;
 import eu.rekawek.toxiproxy.Proxy;
 import eu.rekawek.toxiproxy.ToxiproxyClient;
 import eu.rekawek.toxiproxy.model.ToxicDirection;
@@ -61,9 +62,17 @@ public class ElasticReliabilityTest extends ElasticAbstractQueryTest {
     private static void listContainers(String description) {
         DockerClient dockerClient = checkIfDockerClientAvailable();
         List<Container> containers = dockerClient.listContainersCmd().exec();
+        List<Network> networks = dockerClient.listNetworksCmd().exec();
         LOG.info("List of containers - " + description);
         for (Container container : containers) {
-            LOG.info("name:" + container.getImage() + " status:" + container.getStatus() + " state:" + container.getState());
+//            LOG.info("name:" + container.getImage() + " status:" + container.getStatus() + " state:" + container.getState());
+            LOG.info(container.toString());
+            System.out.println(container);
+        }
+        LOG.info("List of networks - " + description);
+        for (Network network : networks) {
+            LOG.info(network.toString());
+            System.out.println(network);
         }
     }
 
