@@ -28,6 +28,7 @@ import org.junit.After;
 import org.junit.Test;
 import org.testcontainers.containers.ToxiproxyContainer;
 import org.testcontainers.containers.output.Slf4jLogConsumer;
+import org.testcontainers.containers.wait.strategy.Wait;
 import org.testcontainers.utility.DockerImageName;
 
 import java.io.IOException;
@@ -52,7 +53,9 @@ public class ElasticReliabilityTest extends ElasticAbstractQueryTest {
     @Override
     public void before() throws Exception {
         listContainers("before ToxiProxy start");
-        toxiproxy = new ToxiproxyContainer(TOXIPROXY_IMAGE).withNetwork(elasticRule.elastic.getNetwork());
+        toxiproxy = new ToxiproxyContainer(TOXIPROXY_IMAGE)
+                .withNetwork(elasticRule.elastic.getNetwork())
+                .withNetworkAliases("toxiproxy");
         toxiproxy.start();
         Slf4jLogConsumer logConsumer = new Slf4jLogConsumer(LOG).withSeparateOutputStreams();
         toxiproxy.followOutput(logConsumer);
