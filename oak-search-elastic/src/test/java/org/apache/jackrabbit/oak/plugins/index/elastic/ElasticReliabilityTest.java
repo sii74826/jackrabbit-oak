@@ -27,6 +27,7 @@ import org.apache.jackrabbit.oak.api.Tree;
 import org.junit.After;
 import org.junit.Test;
 import org.testcontainers.containers.ToxiproxyContainer;
+import org.testcontainers.containers.output.Slf4jLogConsumer;
 import org.testcontainers.utility.DockerImageName;
 
 import java.io.IOException;
@@ -53,6 +54,8 @@ public class ElasticReliabilityTest extends ElasticAbstractQueryTest {
         listContainers("before ToxiProxy start");
         toxiproxy = new ToxiproxyContainer(TOXIPROXY_IMAGE).withNetwork(elasticRule.elastic.getNetwork());
         toxiproxy.start();
+        Slf4jLogConsumer logConsumer = new Slf4jLogConsumer(LOG).withSeparateOutputStreams();
+        toxiproxy.followOutput(logConsumer);
         ToxiproxyClient toxiproxyClient = new ToxiproxyClient(toxiproxy.getHost(), toxiproxy.getControlPort());
         proxy = toxiproxyClient.createProxy("elastic", "0.0.0.0:8666", "elasticsearch:9200");
         listContainers("after ToxiProxy start");
