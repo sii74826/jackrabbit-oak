@@ -46,21 +46,21 @@ public class ElasticReliabilityTest extends ElasticAbstractQueryTest {
 
     private static final DockerImageName TOXIPROXY_IMAGE = DockerImageName.parse("ghcr.io/shopify/toxiproxy:2.9.0");
 
-//    private ToxiproxyContainer toxiproxy;
-//
-//    private Proxy proxy;
+    private ToxiproxyContainer toxiproxy;
+
+    private Proxy proxy;
 
     @Override
     public void before() throws Exception {
         listContainers("before ToxiProxy start");
-//        toxiproxy = new ToxiproxyContainer(TOXIPROXY_IMAGE)
-//                .withNetwork(elasticRule.elastic.getNetwork())
-//                .withNetworkAliases("toxiproxy");
-//        toxiproxy.start();
-//        Slf4jLogConsumer logConsumer = new Slf4jLogConsumer(LOG).withSeparateOutputStreams();
-//        toxiproxy.followOutput(logConsumer);
-//        ToxiproxyClient toxiproxyClient = new ToxiproxyClient(toxiproxy.getHost(), toxiproxy.getControlPort());
-//        proxy = toxiproxyClient.createProxy("elastic", "0.0.0.0:8666", "elasticsearch:9200");
+        toxiproxy = new ToxiproxyContainer(TOXIPROXY_IMAGE)
+                .withNetwork(elasticRule.elastic.getNetwork())
+                .withNetworkAliases("toxiproxy");
+        toxiproxy.start();
+        Slf4jLogConsumer logConsumer = new Slf4jLogConsumer(LOG).withSeparateOutputStreams();
+        toxiproxy.followOutput(logConsumer);
+        ToxiproxyClient toxiproxyClient = new ToxiproxyClient(toxiproxy.getHost(), toxiproxy.getControlPort());
+        proxy = toxiproxyClient.createProxy("elastic", "0.0.0.0:8666", "elasticsearch:9200");
         listContainers("after ToxiProxy start");
         super.before();
     }
@@ -87,9 +87,9 @@ public class ElasticReliabilityTest extends ElasticAbstractQueryTest {
     public void tearDown() throws IOException {
         listContainers("before tearDown");
         super.tearDown();
-//        if (toxiproxy.isRunning()) {
-//            toxiproxy.stop();
-//        }
+        if (toxiproxy.isRunning()) {
+            toxiproxy.stop();
+        }
     }
 
     @Override
@@ -100,7 +100,7 @@ public class ElasticReliabilityTest extends ElasticAbstractQueryTest {
     @Override
     protected ElasticConnection getElasticConnection() {
         return elasticRule.useDocker() ?
-                elasticRule.getElasticConnectionForDocker() :
+                elasticRule.getElasticConnectionForDocker(toxiproxy.getHost(), toxiproxy.getMappedPort(8666)) :
                 elasticRule.getElasticConnectionFromString();
     }
 
@@ -117,18 +117,18 @@ public class ElasticReliabilityTest extends ElasticAbstractQueryTest {
 
         String query = "select [jcr:path] from [nt:base] where propa is not null";
 
-//        // simulate an upstream connection cut
-//        LimitData cutConnectionUpstream = proxy.toxics()
-//                .limitData("CUT_CONNECTION_UPSTREAM", ToxicDirection.UPSTREAM, 0L);
-//
-//        // elastic is down, query should not use it
-//        assertThat(explain(query), not(containsString("elasticsearch:" + indexName)));
-//
-//        // result set should be correct anyway since traversal is enabled
-//        assertQuery(query, Arrays.asList("/test/a", "/test/b"));
-//
-//        // re-establish connection
-//        cutConnectionUpstream.remove();
+        // simulate an upstream connection cut
+        LimitData cutConnectionUpstream = proxy.toxics()
+                .limitData("CUT_CONNECTION_UPSTREAM", ToxicDirection.UPSTREAM, 0L);
+
+        // elastic is down, query should not use it
+        assertThat(explain(query), not(containsString("elasticsearch:" + indexName)));
+
+        // result set should be correct anyway since traversal is enabled
+        assertQuery(query, Arrays.asList("/test/a", "/test/b"));
+
+        // re-establish connection
+        cutConnectionUpstream.remove();
 
         // result set should be the same as before but this time elastic should be used
         assertThat(explain(query), containsString("elasticsearch:" + indexName));
