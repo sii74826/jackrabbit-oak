@@ -74,8 +74,8 @@ public class ElasticTestServer implements AutoCloseable {
                 throw new RuntimeException("Unable to start ES container after retries. Any further tests will fail");
             }
             Runtime.getRuntime().addShutdownHook(new Thread(() -> {
-                LOG.info("Stopping global ES test server. - skipped");
-//                SERVER.close();
+                LOG.info("Stopping global ES test server.");
+                SERVER.close();
             }));
         }
         return CONTAINER;
@@ -93,7 +93,6 @@ public class ElasticTestServer implements AutoCloseable {
         downloadSimilaritySearchPluginIfNotExists(localPluginPath, pluginVersion);
         checkIfDockerClientAvailable();
         Network network = Network.newNetwork();
-
         CONTAINER = new ElasticsearchContainer("docker.elastic.co/elasticsearch/elasticsearch:" + esDockerImageVersion)
                 .withEnv("ES_JAVA_OPTS", "-Xms1g -Xmx1g")
                 .withCopyFileToContainer(
