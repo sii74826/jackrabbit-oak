@@ -38,7 +38,6 @@ import java.util.List;
 import java.util.UUID;
 
 import static org.apache.jackrabbit.oak.plugins.index.elastic.ElasticTestServer.checkIfDockerClientAvailable;
-import static org.apache.jackrabbit.oak.plugins.index.elastic.ElasticTestServer.sleepForMinutes;
 import static org.hamcrest.CoreMatchers.containsString;
 import static org.hamcrest.CoreMatchers.not;
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -58,16 +57,10 @@ public class ElasticReliabilityTest extends ElasticAbstractQueryTest {
                 .withNetwork(elasticRule.elastic.getNetwork())
                 .withNetworkAliases("toxiproxy");
         toxiproxy.start();
-
         Slf4jLogConsumer logConsumer = new Slf4jLogConsumer(LOG).withSeparateOutputStreams();
         toxiproxy.followOutput(logConsumer);
         ToxiproxyClient toxiproxyClient = new ToxiproxyClient(toxiproxy.getHost(), toxiproxy.getControlPort());
         proxy = toxiproxyClient.createProxy("elastic", "0.0.0.0:8666", "elasticsearch:9200");
-
-        int timeoutMinute = 15;
-        LOG.info("Staring Toxi - sleep for minutes:" +  timeoutMinute);
-        sleepForMinutes(timeoutMinute);
-        LOG.info("Staring Toxi - sleep end");
         listContainers("after ToxiProxy start");
         super.before();
     }
