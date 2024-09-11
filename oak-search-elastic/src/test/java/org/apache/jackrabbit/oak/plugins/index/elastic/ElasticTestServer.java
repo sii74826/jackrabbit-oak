@@ -112,20 +112,6 @@ public class ElasticTestServer implements AutoCloseable {
 
         Slf4jLogConsumer logConsumer = new Slf4jLogConsumer(LOG).withSeparateOutputStreams();
         CONTAINER.followOutput(logConsumer);
-
-        int timeoutMinute = 5;
-        LOG.info("Staring ES - sleep for minutes:" +  timeoutMinute);
-        sleepForMinutes(timeoutMinute);
-        LOG.info("Staring ES - sleep end");
-    }
-
-    public static void sleepForMinutes(int minutes) {
-        try {
-            long millis = minutes * 60 * 1000;
-            Thread.sleep(millis);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
     }
 
     @Override
