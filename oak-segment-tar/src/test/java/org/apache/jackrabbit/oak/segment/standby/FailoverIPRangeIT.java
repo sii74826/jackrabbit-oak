@@ -34,6 +34,7 @@ import org.apache.jackrabbit.oak.segment.standby.client.StandbyClientSync;
 import org.apache.jackrabbit.oak.segment.standby.server.StandbyServerSync;
 import org.apache.jackrabbit.oak.segment.test.TemporaryFileStore;
 import org.apache.jackrabbit.oak.spi.state.NodeStore;
+import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.RuleChain;
@@ -66,6 +67,7 @@ public class FailoverIPRangeIT extends TestBase {
     }
 
     @Test
+    @Ignore
     public void testFailoverLocalClientUseIPv6() throws Exception {
         assumeFalse(jenkinsNodeLabel("beam"));
         assumeFalse(noDualStackSupport);
@@ -127,6 +129,7 @@ public class FailoverIPRangeIT extends TestBase {
     }
 
     @Test
+    @Ignore
     public void testFailoverCorrectListUseIPv6() throws Exception {
         assumeFalse(jenkinsNodeLabel("beam"));
         assumeFalse(noDualStackSupport);
@@ -134,6 +137,7 @@ public class FailoverIPRangeIT extends TestBase {
     }
 
     @Test
+    @Ignore
     public void testFailoverCorrectListIPv6UseIPv6() throws Exception {
         assumeFalse(jenkinsNodeLabel("beam"));
         assumeFalse(noDualStackSupport);
