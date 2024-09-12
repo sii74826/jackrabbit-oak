@@ -55,6 +55,8 @@ public class ElasticReliabilityTest extends ElasticAbstractQueryTest {
         listContainers("before ToxiProxy start");
         toxiproxy = new ToxiproxyContainer(TOXIPROXY_IMAGE)
                 .withNetwork(elasticRule.elastic.getNetwork())
+                .withEnv("LOG_LEVEL", "trace")
+                .dependsOn(elasticRule.elastic)
                 .withNetworkAliases("toxiproxy");
         toxiproxy.start();
         Slf4jLogConsumer logConsumer = new Slf4jLogConsumer(LOG).withSeparateOutputStreams();
