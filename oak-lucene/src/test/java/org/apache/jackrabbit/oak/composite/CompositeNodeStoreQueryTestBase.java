@@ -100,7 +100,7 @@ import org.junit.runners.Parameterized.Parameters;
  * store.
  */
 @RunWith(Parameterized.class)
-public class CompositeNodeStoreQueryTestBase {
+public abstract class CompositeNodeStoreQueryTestBase {
 
     protected final NodeStoreKind nodeStoreRoot;
     protected final NodeStoreKind mounts;
